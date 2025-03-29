@@ -21,7 +21,6 @@ function App() {
     if (!city) return;
     setLoading(true);
     try {
-      
       const { data } = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`
       );
@@ -60,7 +59,7 @@ function App() {
 
       const dailyForecast = {};
       data.list.forEach((entry) => {
-        const date = entry.dt_txt.split(" ")[0]; 
+        const date = entry.dt_txt.split(" ")[0];
         if (!dailyForecast[date]) {
           dailyForecast[date] = {
             temp: entry.main.temp,
@@ -70,7 +69,7 @@ function App() {
         }
       });
 
-      setForecast(Object.values(dailyForecast).slice(0, 5)); 
+      setForecast(Object.values(dailyForecast).slice(0, 5));
     } catch (error) {
       console.log("Error fetching forecast:", error);
       setForecast([]);
@@ -79,7 +78,7 @@ function App() {
 
   return (
     <div
-      className={`flex flex-col items-center justify-center min-h-screen ${
+      className={`flex flex-col items-center justify-center min-h-screen px-4 sm:px-8 lg:px-16 ${
         isDarkMode ? "bg-gray-900 text-white" : "bg-gray-300 text-black"
       } transition-all duration-300`}
     >
@@ -92,10 +91,10 @@ function App() {
         {isDarkMode ? "Light Mode" : "Dark Mode"}
       </button>
 
-      <h1 className="my-6 font-semibold">Weather App</h1>
+      <h1 className="my-6 font-semibold text-xl sm:text-2xl">Weather App</h1>
 
       {/* Search Bar */}
-      <div className="flex items-center bg-white rounded-full px-4 py-2 mb-4 w-80 shadow-lg">
+      <div className="flex items-center bg-white rounded-full px-4 py-2 mb-4 w-full max-w-xs sm:max-w-sm shadow-lg">
         <input
           type="text"
           placeholder="Search"
@@ -109,16 +108,14 @@ function App() {
         />
       </div>
 
-      {/* Recently Searched Cities last  */}
+      {/* Recently Searched Cities */}
       {recentCities.length > 0 && (
         <div className="flex flex-wrap justify-center gap-2 mb-4">
           {recentCities.map((city, index) => (
             <button
               key={index}
               onClick={() => fetchWeather(city)}
-              className={`px-3 py-1 rounded-md text-sm transition ${
-                isDarkMode ? "bg-gray-700 text-white hover:bg-gray-600" : "bg-gray-500 text-black hover:bg-gray-400"
-              }`}
+              className="px-3 py-1 rounded-md text-sm bg-gray-500 text-white hover:bg-gray-400 transition"
             >
               {city}
             </button>
@@ -126,51 +123,38 @@ function App() {
         </div>
       )}
 
-      {/* Weather Icon */}
+      {/* Weather Icon & Info */}
       <img
         src={`https://openweathermap.org/img/wn/${weatherIcon}@2x.png`}
-        alt=""
-        className="w-20 h-20 mb-4"
+        alt="Weather Icon"
+        className="w-24 h-24 mb-4"
       />
-
-      {/* Temperature & City Name */}
-      <h1 className="text-4xl font-bold mb-1">
-        {loading ? "Loading..." : temperature !== null ? `${temperature}°C` : "--"}
-      </h1>
-      <h2 className="text-2xl mt-2 font-semibold">{cityName || "Type to check temperature"}</h2>
+      <h1 className="text-4xl font-bold mb-1">{loading ? "Loading..." : temperature ? `${temperature}°C` : "--"}</h1>
+      <h2 className="text-xl font-semibold">{cityName || "Type to check temperature"}</h2>
 
       {/* Humidity & Wind Speed */}
-      <div className="w-full max-w-md mt-7 flex flex-col md:flex-row items-center justify-between md:items-start">
-        <div className="flex flex-col items-center">
-          <WiHumidity className="text-3xl" />
-          <span className="text-lg font-medium">{humidity !== null ? `${humidity}%` : "--"}</span>
+      <div className="flex flex-wrap justify-center gap-8 mt-5">
+        <div className="text-center">
+          <WiHumidity className="text-4xl" />
+          <p>{humidity ? `${humidity}%` : "--"}</p>
           <p className="text-sm">Humidity</p>
         </div>
-        <div className="flex flex-col items-center">
-          <WiStrongWind className="text-3xl" />
-          <span className="text-lg font-medium">{windSpeed !== null ? `${windSpeed}km/h` : "--"}</span>
+        <div className="text-center">
+          <WiStrongWind className="text-4xl" />
+          <p>{windSpeed ? `${windSpeed} km/h` : "--"}</p>
           <p className="text-sm">Wind Speed</p>
         </div>
       </div>
 
       {/* 5-Day Forecast */}
       {forecast.length > 0 && (
-        <div className="mt-10">
-          <h2 className="text-xl font-semibold mb-4">5-Day Forecast</h2>
-          <div className="flex gap-4">
+        <div className="mt-10 w-full max-w-3xl px-4">
+          <h2 className="text-xl font-semibold mb-4 text-center">5-Day Forecast</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {forecast.map((day, index) => (
-              <div
-                key={index}
-                className={`p-4 rounded-lg shadow-lg text-center ${
-                  isDarkMode ? "bg-gray-800 text-white" : "bg-gray-400 text-black"
-                }`}
-              >
+              <div key={index} className="p-4 rounded-lg shadow-lg text-center bg-gray-600 text-white">
                 <p className="text-sm font-medium">{day.date}</p>
-                <img
-                  src={`https://openweathermap.org/img/wn/${day.icon}@2x.png`}
-                  alt=""
-                  className="w-14 mx-auto"
-                />
+                <img src={`https://openweathermap.org/img/wn/${day.icon}@2x.png`} alt="" className="w-14 mx-auto" />
                 <p className="text-lg font-bold">{Math.round(day.temp)}°C</p>
               </div>
             ))}
