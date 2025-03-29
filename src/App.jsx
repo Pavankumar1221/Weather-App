@@ -21,6 +21,7 @@ function App() {
     if (!city) return;
     setLoading(true);
     try {
+      
       const { data } = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`
       );
@@ -59,7 +60,7 @@ function App() {
 
       const dailyForecast = {};
       data.list.forEach((entry) => {
-        const date = entry.dt_txt.split(" ")[0];
+        const date = entry.dt_txt.split(" ")[0]; 
         if (!dailyForecast[date]) {
           dailyForecast[date] = {
             temp: entry.main.temp,
@@ -69,7 +70,7 @@ function App() {
         }
       });
 
-      setForecast(Object.values(dailyForecast).slice(0, 5));
+      setForecast(Object.values(dailyForecast).slice(0, 5)); 
     } catch (error) {
       console.log("Error fetching forecast:", error);
       setForecast([]);
@@ -77,10 +78,12 @@ function App() {
   };
 
   return (
-    <div className={`flex flex-col items-center justify-center min-h-screen w-full px-4 sm:px-6 lg:px-8 ${
+    <div
+      className={`flex flex-col items-center justify-center min-h-screen ${
         isDarkMode ? "bg-gray-900 text-white" : "bg-gray-300 text-black"
       } transition-all duration-300`}
     >
+      {/* Toggle Button */}
       <button
         onClick={() => setIsDarkMode(!isDarkMode)}
         className="absolute top-5 right-5 bg-gray-700 text-white px-4 py-2 rounded-full flex items-center gap-2 hover:bg-gray-600 transition"
@@ -89,9 +92,10 @@ function App() {
         {isDarkMode ? "Light Mode" : "Dark Mode"}
       </button>
 
-      <h1 className="my-6 font-semibold text-center text-lg sm:text-xl md:text-2xl">Weather App</h1>
+      <h1 className="my-6 font-semibold">Weather App</h1>
 
-      <div className="flex items-center bg-white rounded-full px-4 py-2 mb-4 w-full max-w-md shadow-lg">
+      {/* Search Bar */}
+      <div className="flex items-center bg-white rounded-full px-4 py-2 mb-4 w-80 shadow-lg">
         <input
           type="text"
           placeholder="Search"
@@ -105,6 +109,7 @@ function App() {
         />
       </div>
 
+      {/* Recently Searched Cities last  */}
       {recentCities.length > 0 && (
         <div className="flex flex-wrap justify-center gap-2 mb-4">
           {recentCities.map((city, index) => (
@@ -121,14 +126,21 @@ function App() {
         </div>
       )}
 
-      <img src={`https://openweathermap.org/img/wn/${weatherIcon}@2x.png`} alt="Weather Icon" className="w-20 h-20 mb-4" />
+      {/* Weather Icon */}
+      <img
+        src={`https://openweathermap.org/img/wn/${weatherIcon}@2x.png`}
+        alt=""
+        className="w-20 h-20 mb-4"
+      />
 
+      {/* Temperature & City Name */}
       <h1 className="text-4xl font-bold mb-1">
         {loading ? "Loading..." : temperature !== null ? `${temperature}°C` : "--"}
       </h1>
-      <h2 className="text-xl sm:text-2xl mt-2 font-semibold text-center">{cityName || "Type to check temperature"}</h2>
+      <h2 className="text-2xl mt-2 font-semibold">{cityName || "Type to check temperature"}</h2>
 
-      <div className="w-full max-w-md mt-7 flex flex-col sm:flex-row items-center justify-between sm:items-start">
+      {/* Humidity & Wind Speed */}
+      <div className="w-full max-w-md mt-7 flex flex-col md:flex-row items-center justify-between md:items-start">
         <div className="flex flex-col items-center">
           <WiHumidity className="text-3xl" />
           <span className="text-lg font-medium">{humidity !== null ? `${humidity}%` : "--"}</span>
@@ -141,14 +153,24 @@ function App() {
         </div>
       </div>
 
+      {/* 5-Day Forecast */}
       {forecast.length > 0 && (
-        <div className="mt-10 w-full max-w-2xl">
-          <h2 className="text-xl font-semibold mb-4 text-center">5-Day Forecast</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+        <div className="mt-10">
+          <h2 className="text-xl font-semibold mb-4">5-Day Forecast</h2>
+          <div className="flex gap-4">
             {forecast.map((day, index) => (
-              <div key={index} className="p-4 rounded-lg shadow-md text-center">
+              <div
+                key={index}
+                className={`p-4 rounded-lg shadow-lg text-center ${
+                  isDarkMode ? "bg-gray-800 text-white" : "bg-gray-400 text-black"
+                }`}
+              >
                 <p className="text-sm font-medium">{day.date}</p>
-                <img src={`https://openweathermap.org/img/wn/${day.icon}@2x.png`} alt="" className="w-14 mx-auto" />
+                <img
+                  src={`https://openweathermap.org/img/wn/${day.icon}@2x.png`}
+                  alt=""
+                  className="w-14 mx-auto"
+                />
                 <p className="text-lg font-bold">{Math.round(day.temp)}°C</p>
               </div>
             ))}
