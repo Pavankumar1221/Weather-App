@@ -1,0 +1,4 @@
+https://api.openweathermap.org/data/2.5/weather?q=${VALUE}&units=metric&appid=${API_KEY}
+
+
+https://openweathermap.org/img/wn/${VALUE}@2x.png
